@@ -52,46 +52,38 @@ public class FullRequirementPath {
     // We want to know every edge in the tree, so we use if an edge has been visited rather than vertex to determine next step
     public void build_pre_req_graph(Requirement starting_req, CourseService courseService){
 
-        // Want to keep track of visited edges, instead of nodes to accunt for
+        // Want to keep track of visited edges, instead of nodes to account for
         List<Edge> output_list = new LinkedList<Edge>();
         HashMap output_map = new HashMap();
         LinkedList<Requirement> nodes = new LinkedList<>();
         HashSet<Edge> seenEdges = new HashSet<>();
         HashSet<String> visitedCourses = new HashSet<>();
+        HashSet visitedNodes = new HashSet();
+
         Queue<Requirement> to_visit_queue = new LinkedList<>();
         Requirement clone_req = starting_req.clone();
         int head_index;
+        int nodes_seen = 0;
+        Requirement current;
 
-//        List<Requirement> clone_sub_reqs = starting_req.getPrereqs().clone();
+        LinkedList<Requirement> neighbors;
         if (clone_req.getType() != null) {
             to_visit_queue.add(clone_req);
         }
-//        Requirement current = current = starting_req;
-
-        int nodes_seen = 0;
 
         // Transform adjacency list implementation into edge list and vertex list implementation for use with cytoscape.js
         while (!to_visit_queue.isEmpty()){
             //Visit the current node
-            Requirement current = to_visit_queue.remove();
-            if (!seenVertices.contains(current)){
-                seenVertices.add(current);
-                requirementIntegerHashMap.put(current, nodes_seen);
-                nodes_seen++;
-            }
+            current = to_visit_queue.remove();
+            neighbors = new LinkedList<>();
 
-//            System.out.println(current);
-            //Add neighbor nodes to "to visit" nodes list
-
-            LinkedList<Requirement> neighbors = new LinkedList<>();
             if (current.getSub_maps() != null){
                 neighbors.addAll(current.getSub_maps());
             }
 
-
-            //If we're at a 'course' requirement, we want to expand the pre req tree by having that course's pre reqs
-            // in the tree as well as endpoints of outgoing edges from course type requirement
             if (current.getType().equals("course")){
+                //If we've already seen the course, don't add the edge
+
                 visitedCourses.add(current.getName());
                 Optional<Course> optional_course = courseService.singleCourse(current.getName());
                 Course courseObj;
@@ -107,33 +99,58 @@ public class FullRequirementPath {
 
 
             }
+
+
+
+
+            if (!seenVertices.contains(current)){
+                seenVertices.add(current);
+                requirementIntegerHashMap.put(current, nodes_seen);
+                nodes_seen++;
+            }
+
+//            System.out.println(current);
+            //Add neighbor nodes to "to visit" nodes list
+
+
+
+
+
+            //If we're at a 'course' requirement, we want to expand the pre req tree by having that course's pre reqs
+            // in the tree as well as endpoints of outgoing edges from course type requirement
+
             current.setSub_maps(null);
 
 //            to_visit_queue.addAll(neighbors);
 
 
+            if (!visitedNodes.contains(current)) {
 
 
-            for (Requirement neighbor: neighbors){
-                if (!seenVertices.contains(neighbor)){
-                    seenVertices.add(neighbor);
-                    requirementIntegerHashMap.put(neighbor, nodes_seen);
+                for (Requirement neighbor : neighbors) {
+                    if (!seenVertices.contains(neighbor)) {
+                        seenVertices.add(neighbor);
+                        requirementIntegerHashMap.put(neighbor, nodes_seen);
 //                    System.out.println(neighbor);
-                    nodes_seen++;
-                }
-                Edge potential_edge = new Edge(current, neighbor);
-                // If we've already looked at this edge don't add it to the to visit queue
-                if ( seenEdges.contains(potential_edge) || neighbor.getType() == null ){
-                    continue;
-                }else {
-                    to_visit_queue.add(neighbor);
-                    seenEdges.add(potential_edge);
+                        nodes_seen++;
+                    }
+                    Edge potential_edge = new Edge(current, neighbor);
 
-                    // If we haven't seen this edge then add it to the graph edge list
-                    //Else
+                    // If we've already looked at this edge don't add it to the to visit queue
+                    if (seenEdges.contains(potential_edge) || neighbor.getType() == null) {
+                        continue;
+                    } else {
+                        to_visit_queue.add(neighbor);
+                        seenEdges.add(potential_edge);
 
+                        // If we haven't seen this edge then add it to the graph edge list
+                        //Else
+
+                    }
                 }
             }
+
+            visitedNodes.add(current);
 
 
         }
@@ -142,6 +159,11 @@ public class FullRequirementPath {
 //        System.out.println("HEY YALL\n"+this.requirementIntegerHashMap);
         LinkedList edges = new LinkedList<>((seenEdges));
     }
+
+    public void current_course(Requirement current){
+
+    }
+
 
     private class Graph {
 

@@ -106,19 +106,19 @@ public class Course implements Cloneable{
         Course course = this.clone();
         Requirement current = this.prereqs.clone();
         course.prereqs = current;
-
-        HashSet<Requirement> visited = new HashSet<>();
-
 //
-//        long time_before = System.nanoTime();
-        this.getExpandedTree(current, visited, courseService);
-//        long time_after = System.nanoTime();
+//        HashSet<Requirement> visited = new HashSet<>();
 //
-//        long time_passed = time_after-time_before;
-////        System.out.println("Before: "+time_before);
-////        System.out.println("After: "+time_after);
-//        System.out.println("Elapsed time in seconds: " + time_passed/1000000000);
-        System.out.println(course);
+////
+////        long time_before = System.nanoTime();
+//        this.getExpandedTree(current, visited, courseService);
+////        long time_after = System.nanoTime();
+////
+////        long time_passed = time_after-time_before;
+//////        System.out.println("Before: "+time_before);
+//////        System.out.println("After: "+time_after);
+////        System.out.println("Elapsed time in seconds: " + time_passed/1000000000);
+//        System.out.println(course);
         return current;
 
 //        return prereqs;

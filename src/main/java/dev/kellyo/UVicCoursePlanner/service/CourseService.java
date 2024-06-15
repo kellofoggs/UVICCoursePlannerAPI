@@ -48,6 +48,7 @@ public class CourseService {
             FullRequirementPath path = new FullRequirementPath();
 
             Optional<Requirement>  full_tree = Optional.of(head.expandedTreeWrapper(this));
+//            Optional<Requirement>  full_tree = Optional.of(head.expandedTreeWrapper());
 
             Course course = head.clone();
             Requirement current = head.getPrereqs().clone();

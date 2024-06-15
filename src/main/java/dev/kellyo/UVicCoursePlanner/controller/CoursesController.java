@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/courses")
@@ -79,5 +76,28 @@ public class CoursesController {
         return new ResponseEntity<List<Requirement>>(output, HttpStatus.OK);
     }
 
+    @GetMapping("/allCoursesAndDepartments")
+    public ResponseEntity<Object> getAllCoursesAndDepartments(){
+        LinkedList courseNames = new LinkedList<>();
+        HashMap<String, LinkedList<String>> departments = new HashMap<>();
+        for (Course course: courseService.allCourses()){
+            String course_name = course.getCourseName();
+            String subject_header = course_name.split("[0-9]")[0];
+            if (!departments.containsKey(subject_header)){
+                departments.put(subject_header, new LinkedList<>());
 
+            }else{
+                departments.get(subject_header).add(course_name);
+            }
+
+        }
+
+        return new ResponseEntity<>(departments, HttpStatus.OK);
+
+
+
+
+
+//        return null;
+    }
 }

@@ -43,12 +43,12 @@ public class CoursesController {
      * @return output
      */
     @GetMapping("/getPreReqs/{courseCode}")
-    public ResponseEntity<Optional<Requirement>> getCoursePreReqTree(@PathVariable String courseCode) {
+    public ResponseEntity<Optional<HashMap<String, List>>> getCoursePreReqTree(@PathVariable String courseCode) {
         System.out.println(courseCode);
 
         Course headCourse = courseService.singleCourse(courseCode).get();
-        ResponseEntity<Optional<Requirement>> output = new ResponseEntity<Optional<Requirement>>(courseService.constructPreReqsTree(courseCode), HttpStatus.OK);
-
+        ResponseEntity<Optional<HashMap<String, List>>> output = new ResponseEntity<Optional<HashMap<String, List>>>(courseService.constructPreReqsTree(courseCode), HttpStatus.OK);
+        System.out.println(output);
 
         return output;
     }

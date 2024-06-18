@@ -6,6 +6,7 @@ import dev.kellyo.UVicCoursePlanner.model.Requirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -41,22 +42,22 @@ public class CourseService {
     }
 
     //Some case where the course requirement no longer exists, drop that requirement from tree
-    public Optional<Requirement> constructPreReqsTree(String head_course){
+    public Optional<HashMap<String, List>> constructPreReqsTree(String head_course){
         Optional<Course> head_opt = courseRepo.findCourseByCourseCode(head_course);
         if (head_opt.isPresent()){
             Course head = head_opt.get();
             FullRequirementPath path = new FullRequirementPath();
 
-            Optional<Requirement>  full_tree = Optional.of(head.expandedTreeWrapper(this));
+//            Optional<Requirement>  full_tree = Optional.of(head.expandedTreeWrapper(this));
 //            Optional<Requirement>  full_tree = Optional.of(head.expandedTreeWrapper());
 
             Course course = head.clone();
             Requirement current = head.getPrereqs().clone();
             course.setPrereqs(current);
-            path.build_pre_req_graph(current, this);
+            return Optional.of(path.build_pre_req_graph(current, this));
 
 
-            return full_tree;
+//            return full_tree;
         }
         else
         {
